@@ -62,8 +62,36 @@ def extract_toc(path, start):
         toc_text += "\n" + page_text
         page += 1
     return toc_text
+
+def parse_toc(toc_text):
+    lines = toc_text.splitlines()
+    entries = []
+    buffer = ""
+    last_page = -1
+
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+
+        buffer += " " + line
+
+        match = re.match(r'^(.*?)\s*(?:\.{2,}|(?:\s*\.\s*){3,}|\s{4,})\s*(\d+)$', buffer.strip())
+        if match:
+            title = match.group(1).strip()
+            page = int(match.group(2))
+
+            if page >= last_page:
+                section = re.match(r'^(\d+(\.\d+)*)(\s+|:)', title)
+                level = section.group(1).count('.') + 1 if section else 1
+
+                entries.append([level, title, page])
+                last_page = page 
+
+            buffer = ""
+    return entries
            
 
 def manual_toc(path):
     start = find_toc_start(path)
-
+    text = extract_toc(path, start)
