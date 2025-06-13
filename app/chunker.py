@@ -1,6 +1,6 @@
 import fitz 
 import pandas as pd 
-import toc
+from toc import get_toc, find_toc_start, extract_toc
 
 def extract_pages(path, start_page, end_page):
     doc = fitz.open(path)
@@ -12,11 +12,21 @@ def extract_pages(path, start_page, end_page):
     
 if __name__ == "__main__":
     import sys
-    path = sys.argv[1]
+    import os 
+    os.makedirs("output", exist_ok=True)
+    # path = sys.argv[1]
     # start = int(sys.argv[2])
     # end = int(sys.argv[3])
     # chunk = extract_pages(path, start, end)
     # print(chunk[:1000])
 
-    df = get_toc("data/TEST.pdf")
+    # df = get_toc("data/test3.pdf")
+    # df.to_csv("output/toc.csv", index=False)
+    # print("[+] TOC saved to output/toc.csv")
+    
+    path = "data/test6.pdf"
+    start = find_toc_start(path)
+    print(start)
+    text = extract_toc(path, start)
+    print(text)
 
